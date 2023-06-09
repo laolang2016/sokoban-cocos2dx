@@ -279,8 +279,8 @@ void HelloWorld::playerMove(Vec2 dirVector)
         {
             if (canMove.box_tag == it.first) {
                 // it.second.add(dirVector);
-                boxPositions.at(it.first-1).x += dirVector.x;
-                boxPositions.at(it.first-1).y += dirVector.y;
+                boxPositions.at(it.first - 1).x += dirVector.x;
+                boxPositions.at(it.first - 1).y += dirVector.y;
                 it.second = boxPositions.at(it.first - 1);
                 break;
             }
@@ -290,7 +290,7 @@ void HelloWorld::playerMove(Vec2 dirVector)
         const auto box = getChildByTag(canMove.box_tag);
         const auto boxx = box->getPosition().x + CELL_SIZE * dirVector.x;
         const auto boxy = box->getPosition().y + CELL_SIZE * dirVector.y;
-        box->setPosition(boxx,boxy);
+        box->setPosition(boxx, boxy);
     }
 
     // 更新角色位置信息
@@ -301,4 +301,26 @@ void HelloWorld::playerMove(Vec2 dirVector)
     const auto x = player->getPosition().x + CELL_SIZE * dirVector.x;
     const auto y = player->getPosition().y + CELL_SIZE * dirVector.y;
     player->setPosition(x, y);
+
+    // 刷新箱子颜色
+    refreshBox();
+}
+
+void HelloWorld::refreshBox()
+{
+    int size = 0;
+    for (auto& it : boxTagPosMap)
+    {
+        if (inPosition(ballPositions, it.second))
+        {
+            const auto box = dynamic_cast<Sprite*>(getChildByTag(it.first));
+            box->setDisplayFrame(SpriteFrameCache::sharedSpriteFrameCache()->spriteFrameByName(BOX_RED_PNG));
+            box->setContentSize(Size(CELL_SIZE, CELL_SIZE));
+            size++;
+        }
+    }
+    if (size == boxPositions.size())
+    {
+        log("you win!");
+    }
 }

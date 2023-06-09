@@ -110,6 +110,11 @@ private:
      *  - Vec2(0,-1):下
      */
     void playerMove(Vec2 dirVector);
+
+    // 刷新箱子颜色
+    void refreshBox();
+
+
 };
 
 #endif // __HELLOWORLD_SCENE_H__
