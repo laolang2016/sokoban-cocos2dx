@@ -150,7 +150,17 @@ void HelloWorld::drawBall()
 // 绘制箱子
 void HelloWorld::drawBox()
 {
-    drawSprite(boxPositions, BOX_BLUE_PNG, LAYER_INDEX_BOX);
+    for (int i = 0; i < boxPositions.size(); i++)
+    {
+        const auto& position = boxPositions.at(i);
+        auto sprite = Sprite::createWithSpriteFrameName(BOX_BLUE_PNG);
+        sprite->setContentSize(Size(CELL_SIZE, CELL_SIZE));
+        sprite->setPosition(Vec2(CELL_SIZE * position.x, CELL_SIZE * position.y));
+        sprite->setTag(i + 1);
+        this->addChild(sprite, LAYER_INDEX_BOX);
+
+        boxTagPosMap[i + 1] = position;
+    }
 }
 
 // 绘制角色
@@ -198,10 +208,23 @@ void HelloWorld::initKeyboardListener()
     Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listener, player);
 }
 
+int HelloWorld::findBoxTagByVec(Vec2 pos)
+{
+    int tag = 0;
+    for (auto& it : boxTagPosMap)
+    {
+        if (pos.equals(it.second)) {
+            tag = it.first;
+            break;
+        }
+    }
+    return tag;
+}
+
 bool HelloWorld::inPosition(std::vector<Vec2> positions, Vec2 pos)
 {
     bool flag = false;
-    for (const Vec2 v : boxPositions)
+    for (auto& v : positions)
     {
         if (pos.x == v.x && pos.y == v.y) {
             flag = true;
@@ -211,35 +234,63 @@ bool HelloWorld::inPosition(std::vector<Vec2> positions, Vec2 pos)
     return flag;
 }
 
-bool HelloWorld::canPlayerMove(Vec2 dirVector)
+PLAYER_CAN_MOVE HelloWorld::canPlayerMove(Vec2 dirVector)
 {
-    bool flag = true;
+    PLAYER_CAN_MOVE canMove = { false,0 };
 
     Vec2 nextPosition = Vec2(playerPosition.x + dirVector.x, playerPosition.y + dirVector.y);
 
     // 判断移动方向上是否有箱子
-    bool hasBox = inPosition(boxPositions,nextPosition);
+    const bool hasBox = inPosition(boxPositions, nextPosition);
 
     // 如果有箱子, 则判断箱子下个位置是否还有箱子或者有边墙
     if (hasBox)
     {
         // 下个位置是否有箱子或边墙
         nextPosition.add(dirVector);
-        flag = !inPosition(boxPositions, nextPosition) && !inPosition(wallPositions, nextPosition);
+        canMove.flag = !inPosition(boxPositions, nextPosition) && !inPosition(wallPositions, nextPosition);
     }
     else
     {
         // 没有箱子则判断墙壁
-        flag = !inPosition(wallPositions, nextPosition);
+        canMove.flag = !inPosition(wallPositions, nextPosition);
+    }
+    if (hasBox && canMove.flag)
+    {
+        nextPosition.subtract(dirVector);
+        canMove.box_tag = findBoxTagByVec(nextPosition);
     }
 
-    return flag;
+    return canMove;
 }
 
 void HelloWorld::playerMove(Vec2 dirVector)
 {
-    if (!canPlayerMove(dirVector)) {
+    const auto canMove = canPlayerMove(dirVector);
+    if (!canMove.flag) {
         return;
+    }
+
+    // 更新箱子位置
+    if (0 != canMove.box_tag)
+    {
+        // 更新箱子位置信息
+        for (auto& it : boxTagPosMap)
+        {
+            if (canMove.box_tag == it.first) {
+                // it.second.add(dirVector);
+                boxPositions.at(it.first-1).x += dirVector.x;
+                boxPositions.at(it.first-1).y += dirVector.y;
+                it.second = boxPositions.at(it.first - 1);
+                break;
+            }
+        }
+
+        // 移动箱子
+        const auto box = getChildByTag(canMove.box_tag);
+        const auto boxx = box->getPosition().x + CELL_SIZE * dirVector.x;
+        const auto boxy = box->getPosition().y + CELL_SIZE * dirVector.y;
+        box->setPosition(boxx,boxy);
     }
 
     // 更新角色位置信息

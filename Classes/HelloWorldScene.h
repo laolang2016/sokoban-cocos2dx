@@ -5,6 +5,15 @@
 
 USING_NS_CC;
 
+// 角色能否移动
+typedef struct {
+    // 能否移动标志
+    bool flag;
+    // 箱子 tag
+    int box_tag;
+
+} PLAYER_CAN_MOVE;
+
 class HelloWorld : public cocos2d::Scene
 {
 public:
@@ -16,6 +25,11 @@ public:
     CREATE_FUNC(HelloWorld);
 
 private:
+    enum {
+        // 箱子 tag 起始值
+        BOX_TAG_START = 100
+    };
+
     // layer index
     static constexpr int LAYER_INDEX_BACKGROUND = 1;
     static constexpr int LAYER_INDEX_BALL = 2;
@@ -38,7 +52,7 @@ private:
     static const std::string PLAYER_PNG;
 
 private:
-    cocos2d::Sprite * player;
+    cocos2d::Sprite* player;
 
 private:
     // 墙壁位置信息
@@ -47,6 +61,8 @@ private:
     std::vector<Vec2> ballPositions;
     // 箱子位置信息
     std::vector<Vec2> boxPositions;
+    // 箱子 tag 和 位置信息 map
+    std::map<int, Vec2> boxTagPosMap;
     // 角色位置信息
     Vec2 playerPosition;
 
@@ -75,15 +91,18 @@ private:
 
 private:
 
+    // 根据箱子坐标查找 tag
+    int findBoxTagByVec(Vec2 pos);
+
     // 坐标是否在给定坐标列表中是
     bool inPosition(std::vector<Vec2> positions, Vec2 pos);
 
     // 角色能否移动
-    bool canPlayerMove(Vec2 dirVector);
+    PLAYER_CAN_MOVE canPlayerMove(Vec2 dirVector);
 
     /**
      * @brief 角色移动
-     * 
+     *
      * @param dirVector 方向向量
      *  - Vec2(1,0):右
      *  - Vec2(-1,0):左
