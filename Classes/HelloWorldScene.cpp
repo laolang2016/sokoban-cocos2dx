@@ -3,6 +3,7 @@
 #include "CommonUtil.h"
 
 #pragma warning(disable: 26429)
+#pragma warning(disable: 26440)
 
 USING_NS_CC;
 
@@ -197,17 +198,41 @@ void HelloWorld::initKeyboardListener()
     Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listener, player);
 }
 
-bool HelloWorld::canPlayerMove(Vec2 dirVector)
+bool HelloWorld::inPosition(std::vector<Vec2> positions, Vec2 pos)
 {
-    const Vec2 position = Vec2(playerPosition.x + dirVector.x, playerPosition.y + dirVector.y);
-    bool flag = true;
-    for (auto v : wallPositions)
+    bool flag = false;
+    for (const Vec2 v : boxPositions)
     {
-        if (position.x == v.x && position.y == v.y) {
-            flag = false;
+        if (pos.x == v.x && pos.y == v.y) {
+            flag = true;
             break;
         }
     }
+    return flag;
+}
+
+bool HelloWorld::canPlayerMove(Vec2 dirVector)
+{
+    bool flag = true;
+
+    Vec2 nextPosition = Vec2(playerPosition.x + dirVector.x, playerPosition.y + dirVector.y);
+
+    // 判断移动方向上是否有箱子
+    bool hasBox = inPosition(boxPositions,nextPosition);
+
+    // 如果有箱子, 则判断箱子下个位置是否还有箱子或者有边墙
+    if (hasBox)
+    {
+        // 下个位置是否有箱子或边墙
+        nextPosition.add(dirVector);
+        flag = !inPosition(boxPositions, nextPosition) && !inPosition(wallPositions, nextPosition);
+    }
+    else
+    {
+        // 没有箱子则判断墙壁
+        flag = !inPosition(wallPositions, nextPosition);
+    }
+
     return flag;
 }
 

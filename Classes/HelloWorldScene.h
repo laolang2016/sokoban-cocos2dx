@@ -75,6 +75,9 @@ private:
 
 private:
 
+    // 坐标是否在给定坐标列表中是
+    bool inPosition(std::vector<Vec2> positions, Vec2 pos);
+
     // 角色能否移动
     bool canPlayerMove(Vec2 dirVector);
 
