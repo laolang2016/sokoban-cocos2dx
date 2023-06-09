@@ -197,8 +197,26 @@ void HelloWorld::initKeyboardListener()
     Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listener, player);
 }
 
+bool HelloWorld::canPlayerMove(Vec2 dirVector)
+{
+    const Vec2 position = Vec2(playerPosition.x + dirVector.x, playerPosition.y + dirVector.y);
+    bool flag = true;
+    for (auto v : wallPositions)
+    {
+        if (position.x == v.x && position.y == v.y) {
+            flag = false;
+            break;
+        }
+    }
+    return flag;
+}
+
 void HelloWorld::playerMove(Vec2 dirVector)
 {
+    if (!canPlayerMove(dirVector)) {
+        return;
+    }
+
     // 更新角色位置信息
     playerPosition.x += dirVector.x;
     playerPosition.y += dirVector.y;
@@ -206,5 +224,5 @@ void HelloWorld::playerMove(Vec2 dirVector)
     // 移动角色
     const auto x = player->getPosition().x + CELL_SIZE * dirVector.x;
     const auto y = player->getPosition().y + CELL_SIZE * dirVector.y;
-    player->setPosition(x,y);
+    player->setPosition(x, y);
 }

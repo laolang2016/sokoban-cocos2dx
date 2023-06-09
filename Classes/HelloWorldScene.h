@@ -74,6 +74,10 @@ private:
     void initKeyboardListener();
 
 private:
+
+    // 角色能否移动
+    bool canPlayerMove(Vec2 dirVector);
+
     /**
      * @brief 角色移动
      * 
