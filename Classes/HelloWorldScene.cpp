@@ -11,56 +11,20 @@ Scene* HelloWorld::createScene()
     return HelloWorld::create();
 }
 
-// layer index
-static constexpr int LAYER_INDEX_BACKGROUND = 1;
-static constexpr int LAYER_INDEX_BALL = 2;
-static constexpr int LAYER_INDEX_WALL = 3;
-static constexpr int LAYER_INDEX_BOX = 4;
-static constexpr int LAYER_INDEX_PLAYER = 5;
-
-// 每一格宽度与高度
-static constexpr int CELL_SIZE = 48;
-
 // 墙壁图片
-static const std::string WALL_PNG = "wall.png";
+const std::string HelloWorld::WALL_PNG = "wall.png";
 // 小球图片
-static const std::string BALL_BLUE_PNG = "ball_blue.png";
-static const std::string BALL_RED_PNG = "ball_red.png";
+const std::string HelloWorld::BALL_BLUE_PNG = "ball_blue.png";
+const std::string HelloWorld::BALL_RED_PNG = "ball_red.png";
 // 详细图片
-static const std::string BOX_BLUE_PNG = "box_blue.png";
-static const std::string BOX_RED_PNG = "box_red.png";
+const std::string HelloWorld::BOX_BLUE_PNG = "box_blue.png";
+const std::string HelloWorld::BOX_RED_PNG = "box_red.png";
 // 角色图片
-static const std::string PLAYER_PNG = "charater.png";
+const std::string HelloWorld::PLAYER_PNG = "charater.png";
 
-// 墙壁位置信息
-static std::vector<Vec2> wallPositions;
-// 小球位置信息
-static std::vector<Vec2> ballPositions;
-// 箱子位置信息
-static std::vector<Vec2> boxPositions;
-// 角色位置信息
-static Vec2 playerPosition;
 
-// 初始化地图数据
-static void initData();
-
-/**
- * @brief 绘制精灵
- * @param scene 场景指针
- * @param positions 精灵位置列表
- * @param png 精灵图片名称
- * @param layerIndex 所在层
- */
-static void drawSprite(HelloWorld* scene, std::vector<Vec2> positions, std::string png, int layerIndex);
-
-// 绘制墙壁
-static void drawWall(HelloWorld* scene);
-// 绘制小球
-static void drawBall(HelloWorld* scene);
-// 绘制箱子
-static void drawBox(HelloWorld* scene);
-// 绘制角色
-static void drawPlayer(HelloWorld* scene);
+// 初始化事件监听
+// static void initKeyboardListener();
 
 bool HelloWorld::init()
 {
@@ -89,21 +53,21 @@ bool HelloWorld::init()
     initData();
 
     // 绘制墙壁
-    drawWall(this);
+    drawWall();
 
     // 绘制小球
-    drawBall(this);
+    drawBall();
 
     // 绘制箱子
-    drawBox(this);
+    drawBox();
 
     // 绘制角色
-    drawPlayer(this);
+    drawPlayer();
 
     return true;
 }
 
-static void initData() {
+void HelloWorld::initData() {
     // 初始化墙壁位置信息
     wallPositions.push_back(Vec2(7, 12));
     wallPositions.push_back(Vec2(8, 12));
@@ -159,39 +123,40 @@ static void initData() {
 }
 
 // 绘制 sprite
-static void drawSprite(HelloWorld* scene, std::vector<Vec2> positions, std::string png, int layerIndex)
+void HelloWorld::drawSprite(std::vector<Vec2> positions, std::string png, int layerIndex)
 {
     for (const Vec2 wallData : positions)
     {
         auto sprite = Sprite::createWithSpriteFrameName(png);
         sprite->setContentSize(Size(CELL_SIZE, CELL_SIZE));
         sprite->setPosition(Vec2(CELL_SIZE * wallData.x, CELL_SIZE * wallData.y));
-        scene->addChild(sprite, layerIndex);
+        this->addChild(sprite, layerIndex);
     }
 }
 
-static void drawWall(HelloWorld* scene)
+// 绘制墙壁
+void HelloWorld::drawWall()
 {
-    drawSprite(scene, wallPositions, WALL_PNG, LAYER_INDEX_WALL);
+    drawSprite(wallPositions, HelloWorld::WALL_PNG, LAYER_INDEX_WALL);
 }
 
 // 绘制小球
-static void drawBall(HelloWorld* scene)
+void HelloWorld::drawBall()
 {
-    drawSprite(scene, ballPositions, BALL_BLUE_PNG, LAYER_INDEX_BALL);
+    drawSprite(ballPositions, BALL_BLUE_PNG, LAYER_INDEX_BALL);
 }
 
 // 绘制箱子
-static void drawBox(HelloWorld* scene)
+void HelloWorld::drawBox()
 {
-    drawSprite(scene, boxPositions, BOX_BLUE_PNG, LAYER_INDEX_BOX);
+    drawSprite(boxPositions, BOX_BLUE_PNG, LAYER_INDEX_BOX);
 }
 
 // 绘制角色
-static void drawPlayer(HelloWorld* scene)
+void HelloWorld::drawPlayer()
 {
-    auto sprite = Sprite::createWithSpriteFrameName(PLAYER_PNG);
-    sprite->setContentSize(Size(CELL_SIZE, CELL_SIZE));
-    sprite->setPosition(Vec2(CELL_SIZE * playerPosition.x, CELL_SIZE * playerPosition.y));
-    scene->addChild(sprite, LAYER_INDEX_PLAYER);
+    player = Sprite::createWithSpriteFrameName(PLAYER_PNG);
+    player->setContentSize(Size(CELL_SIZE, CELL_SIZE));
+    player->setPosition(Vec2(CELL_SIZE * playerPosition.x, CELL_SIZE * playerPosition.y));
+    this->addChild(player, LAYER_INDEX_PLAYER);
 }
