@@ -20,7 +20,7 @@ using namespace CocosDenshion;
 
 USING_NS_CC;
 
-static cocos2d::Size resolutionSize = cocos2d::Size(1024, 768);
+static cocos2d::Size resolutionSize = cocos2d::Size(768, 768);
 
 AppDelegate::AppDelegate() noexcept
 {
