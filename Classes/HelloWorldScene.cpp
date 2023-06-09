@@ -17,7 +17,7 @@ const std::string HelloWorld::WALL_PNG = "wall.png";
 // 小球图片
 const std::string HelloWorld::BALL_BLUE_PNG = "ball_blue.png";
 const std::string HelloWorld::BALL_RED_PNG = "ball_red.png";
-// 详细图片
+// 箱子图片
 const std::string HelloWorld::BOX_BLUE_PNG = "box_blue.png";
 const std::string HelloWorld::BOX_RED_PNG = "box_red.png";
 // 角色图片
