@@ -3,3 +3,7 @@ guidelines = 120
 
 [*.{cpp,c,h}]
 charset = utf-8-bom
+
+[*.{cpp,c,h}]
+indent_style = space
+indent_size = 4
