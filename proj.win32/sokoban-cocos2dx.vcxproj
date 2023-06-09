@@ -151,6 +151,9 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)\Resources\" /D /E /I /F /Y
       <Command>
       </Command>
     </PreLinkEvent>
+    <PreBuildEvent>
+      <Command>xcopy /s /f /h /y $(ProjectDir)..\Resources\res $(OutDir)\Resources</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\Classes\AppDelegate.cpp" />
