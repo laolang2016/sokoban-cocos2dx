@@ -1,28 +1,4 @@
-/****************************************************************************
- Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
- 
- http://www.cocos2d-x.org
- 
- Permission is hereby granted, free of charge, to any person obtaining a copy
- of this software and associated documentation files (the "Software"), to deal
- in the Software without restriction, including without limitation the rights
- to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- copies of the Software, and to permit persons to whom the Software is
- furnished to do so, subject to the following conditions:
- 
- The above copyright notice and this permission notice shall be included in
- all copies or substantial portions of the Software.
- 
- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- THE SOFTWARE.
- ****************************************************************************/
-
-#include "AppDelegate.h"
+﻿#include "AppDelegate.h"
 #include "HelloWorldScene.h"
 
 // #define USE_AUDIO_ENGINE 1
@@ -40,18 +16,17 @@ using namespace cocos2d::experimental;
 using namespace CocosDenshion;
 #endif
 
+#include "CommonUtil.h"
+
 USING_NS_CC;
 
-static cocos2d::Size designResolutionSize = cocos2d::Size(480, 320);
-static cocos2d::Size smallResolutionSize = cocos2d::Size(480, 320);
-static cocos2d::Size mediumResolutionSize = cocos2d::Size(1024, 768);
-static cocos2d::Size largeResolutionSize = cocos2d::Size(2048, 1536);
+static cocos2d::Size resolutionSize = cocos2d::Size(1024, 768);
 
-AppDelegate::AppDelegate()
+AppDelegate::AppDelegate() noexcept
 {
 }
 
-AppDelegate::~AppDelegate() 
+AppDelegate::~AppDelegate()
 {
 #if USE_AUDIO_ENGINE
     AudioEngine::end();
@@ -60,12 +35,11 @@ AppDelegate::~AppDelegate()
 #endif
 }
 
-// if you want a different context, modify the value of glContextAttrs
-// it will affect all platforms
+// 设置 OpenGL环境
 void AppDelegate::initGLContextAttrs()
 {
     // set OpenGL context attributes: red,green,blue,alpha,depth,stencil,multisamplesCount
-    GLContextAttrs glContextAttrs = {8, 8, 8, 8, 24, 8, 0};
+    GLContextAttrs glContextAttrs = { 8, 8, 8, 8, 24, 8, 0 };
 
     GLView::setGLContextAttrs(glContextAttrs);
 }
@@ -77,56 +51,37 @@ static int register_all_packages()
     return 0; //flag for packages manager
 }
 
+// 逻辑初始化
 bool AppDelegate::applicationDidFinishLaunching() {
-    // initialize director
+    // 初始化 director
     auto director = Director::getInstance();
     auto glview = director->getOpenGLView();
-    if(!glview) {
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32) || (CC_TARGET_PLATFORM == CC_PLATFORM_MAC) || (CC_TARGET_PLATFORM == CC_PLATFORM_LINUX)
-        glview = GLViewImpl::createWithRect("sokoban-cocos2dx", cocos2d::Rect(0, 0, designResolutionSize.width, designResolutionSize.height));
-#else
-        glview = GLViewImpl::create("sokoban-cocos2dx");
-#endif
+    // 初始化 opengl 试图
+    if (!glview) {
+        glview = GLViewImpl::createWithRect(CommonUtil::GBKToUTF8("推箱子"), cocos2d::Rect(0, 0, resolutionSize.width, resolutionSize.height));
         director->setOpenGLView(glview);
     }
 
-    // turn on display FPS
-    director->setDisplayStats(true);
-
-    // set FPS. the default value is 1.0/60 if you don't call this
+    // 开启左下角 FPS 状态信息
+    // director->setDisplayStats(true);
+    // 设置 FPS 为 60, 默认为 60
     director->setAnimationInterval(1.0f / 60);
 
-    // Set the design resolution
-    glview->setDesignResolutionSize(designResolutionSize.width, designResolutionSize.height, ResolutionPolicy::NO_BORDER);
-    auto frameSize = glview->getFrameSize();
-    // if the frame's height is larger than the height of medium size.
-    if (frameSize.height > mediumResolutionSize.height)
-    {        
-        director->setContentScaleFactor(MIN(largeResolutionSize.height/designResolutionSize.height, largeResolutionSize.width/designResolutionSize.width));
-    }
-    // if the frame's height is larger than the height of small size.
-    else if (frameSize.height > smallResolutionSize.height)
-    {        
-        director->setContentScaleFactor(MIN(mediumResolutionSize.height/designResolutionSize.height, mediumResolutionSize.width/designResolutionSize.width));
-    }
-    // if the frame's height is smaller than the height of medium size.
-    else
-    {        
-        director->setContentScaleFactor(MIN(smallResolutionSize.height/designResolutionSize.height, smallResolutionSize.width/designResolutionSize.width));
-    }
+    // 设置屏幕分辨率
+    glview->setDesignResolutionSize(resolutionSize.width, resolutionSize.height, ResolutionPolicy::NO_BORDER);
 
     register_all_packages();
 
-    // create a scene. it's an autorelease object
+    // 创建 Hello World 场景, 对象的释放交给 cocos2d-x 管理
     auto scene = HelloWorld::createScene();
 
-    // run
+    // 运行
     director->runWithScene(scene);
 
     return true;
 }
 
-// This function will be called when the app is inactive. Note, when receiving a phone call it is invoked.
+// 切换到后台
 void AppDelegate::applicationDidEnterBackground() {
     Director::getInstance()->stopAnimation();
 
@@ -138,7 +93,7 @@ void AppDelegate::applicationDidEnterBackground() {
 #endif
 }
 
-// this function will be called when the app is active again
+// 切换到前台
 void AppDelegate::applicationWillEnterForeground() {
     Director::getInstance()->startAnimation();
 

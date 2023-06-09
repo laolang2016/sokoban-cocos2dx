@@ -1,2 +1,5 @@
 [*]
 guidelines = 120
+
+[*.{cpp,c,h}]
+charset = utf-8-bom

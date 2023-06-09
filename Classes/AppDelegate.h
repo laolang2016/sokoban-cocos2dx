@@ -1,4 +1,4 @@
-/****************************************************************************
+﻿/****************************************************************************
  Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
  
  http://www.cocos2d-x.org
@@ -35,7 +35,7 @@ Private inheritance here hides part of interface from Director.
 class  AppDelegate : private cocos2d::Application
 {
 public:
-    AppDelegate();
+    AppDelegate() noexcept;
     virtual ~AppDelegate();
 
     virtual void initGLContextAttrs();
