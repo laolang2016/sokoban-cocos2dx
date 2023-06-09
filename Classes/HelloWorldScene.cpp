@@ -11,6 +11,13 @@ Scene* HelloWorld::createScene()
 	return HelloWorld::create();
 }
 
+// layer index
+static constexpr int LAYER_INDEX_BACKGROUND = 1;
+static constexpr int LAYER_INDEX_BALL = 2;
+static constexpr int LAYER_INDEX_WALL = 3;
+static constexpr int LAYER_INDEX_BOX = 4;
+static constexpr int LAYER_INDEX_PLAYER = 5;
+
 // 每一格宽度宇高度
 static constexpr int CELL_SIZE = 48;
 
@@ -47,7 +54,7 @@ bool HelloWorld::init()
 
 	// 设置背景
 	auto background = LayerColor::create(Color4B(25, 72, 148, 255));
-	this->addChild(background, 1);
+	this->addChild(background, LAYER_INDEX_BACKGROUND);
 
 	// 初始化游戏数据
 	initData();
@@ -104,6 +111,6 @@ static void drawWall(HelloWorld* scene)
 		auto sprite = Sprite::createWithSpriteFrameName(WALL_PNG);
 		sprite->setContentSize(Size(CELL_SIZE, CELL_SIZE));
 		sprite->setPosition(Vec2(CELL_SIZE * wallData.x, CELL_SIZE * wallData.y));
-		scene->addChild(sprite, 1);
+		scene->addChild(sprite, LAYER_INDEX_WALL);
 	}
 }
