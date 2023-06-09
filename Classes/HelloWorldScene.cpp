@@ -23,9 +23,6 @@ const std::string HelloWorld::BOX_RED_PNG = "box_red.png";
 const std::string HelloWorld::PLAYER_PNG = "charater.png";
 
 
-// 初始化事件监听
-// static void initKeyboardListener();
-
 bool HelloWorld::init()
 {
     // 先执行父类的 init
@@ -63,6 +60,9 @@ bool HelloWorld::init()
 
     // 绘制角色
     drawPlayer();
+
+    // 初始化键盘事件
+    initKeyboardListener();
 
     return true;
 }
@@ -159,4 +159,52 @@ void HelloWorld::drawPlayer()
     player->setContentSize(Size(CELL_SIZE, CELL_SIZE));
     player->setPosition(Vec2(CELL_SIZE * playerPosition.x, CELL_SIZE * playerPosition.y));
     this->addChild(player, LAYER_INDEX_PLAYER);
+}
+
+
+// 初始化键盘事件
+void HelloWorld::initKeyboardListener()
+{
+    auto listener = EventListenerKeyboard::create();
+    listener->onKeyReleased = [&](EventKeyboard::KeyCode keyCode, Event* e)
+    {
+        switch (keyCode)
+        {
+        case EventKeyboard::KeyCode::KEY_UP_ARROW: {
+            log("key released up");
+            playerMove(Vec2(0, 1));
+            break;
+        }
+        case EventKeyboard::KeyCode::KEY_RIGHT_ARROW: {
+            log("key released right");
+            playerMove(Vec2(1, 0));
+            break;
+        }
+        case EventKeyboard::KeyCode::KEY_DOWN_ARROW: {
+            log("key released down");
+            playerMove(Vec2(0, -1));
+            break;
+        }
+        case EventKeyboard::KeyCode::KEY_LEFT_ARROW: {
+            log("key released left");
+            playerMove(Vec2(-1, 0));
+            break;
+        }
+        }
+        return true;
+    };
+
+    Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listener, player);
+}
+
+void HelloWorld::playerMove(Vec2 dirVector)
+{
+    // 更新角色位置信息
+    playerPosition.x += dirVector.x;
+    playerPosition.y += dirVector.y;
+
+    // 移动角色
+    const auto x = player->getPosition().x + CELL_SIZE * dirVector.x;
+    const auto y = player->getPosition().y + CELL_SIZE * dirVector.y;
+    player->setPosition(x,y);
 }
